@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <string>
 
 #ifdef _WIN32
     #include <conio.h>
@@ -59,13 +60,10 @@ using namespace std;
 
 enum gameModes {CLASSIC, CLASSIC_SPEEDUP, NOWALLS, NOWALLS_INVINCIBLE};
 enum eDirection {STOP, LEFT, RIGHT, UP, DOWN};
-const int playableWidth = 39;
-const int playableHeight = 19;
-const int width = playableWidth + 2;
-const int height = playableHeight + 2;
+int playableWidth, playableHeight, width, height;
+int *tailX, *tailY;
 int headX, headY, fruitX, fruitY;
-int tailX[width*height], tailY[width*height];
-int tailLength = 0, score = 0, maxScore = playableWidth*playableHeight-1, minSpeedUpTime = 20, sleepTime = 70, speedUpDecrement = 2;
+int tailLength, score, maxScore, minSpeedUpTime, sleepTime, speedUpDecrement;
 bool isGameOver = false, isWin = false, isDebugMode = false;
 eDirection dir = STOP;
 gameModes gamemode;
@@ -74,8 +72,8 @@ string wallLine, emptyLine;
 // Random-number generator
 random_device rd;
 mt19937 gen(rd()); // mersenne twister with a long period of 219937 – 1
-uniform_int_distribution<> distribWidth(1, playableWidth);
-uniform_int_distribution<> distribHeight(1, playableHeight);
+uniform_int_distribution<> distribWidth;
+uniform_int_distribution<> distribHeight;
 
 void place_apple() {
     fruitX = distribWidth(gen);
@@ -92,7 +90,22 @@ void place_apple() {
     }
 }
 
-void setup() {
+void setup(int playW = 39, int playH = 19) {
+    playableWidth = playW;
+    playableHeight = playH;
+    width = playableWidth + 2;
+    height = playableHeight + 2;
+    tailX = new int(width*height);
+    tailY = new int(width*height);
+    tailLength = 0;
+    score = 0;
+    maxScore = playableWidth*playableHeight-1;
+    minSpeedUpTime = 20;
+    sleepTime = 70;
+    speedUpDecrement = 2;
+    distribWidth = uniform_int_distribution<>(1, playableWidth);
+    distribHeight = uniform_int_distribution<>(1, playableHeight);
+
     int user_input;
     cout << "Move with AWSD or arrows, x to quit \n" \
          << "1. classic \n" \
@@ -348,8 +361,16 @@ void results() {
     }
 }
 
-int main() {
-    setup();
+int main(int argc, char** argv) {
+    if (argc == 3) {
+        try {
+            setup(stoi(argv[1]), stoi(argv[2]));
+        } catch (...) {
+            setup();
+        }
+    } else {
+        setup();
+    }
     system("stty -echo"); // turns off echo, needed for linux
     if (isGameOver)
         return 1;
@@ -361,5 +382,7 @@ int main() {
     }
     system("stty echo");
     results();
+    delete[] tailX;
+    delete[] tailY;
     return 0;
 }
