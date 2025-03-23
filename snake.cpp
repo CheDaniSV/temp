@@ -107,7 +107,7 @@ void setup(int playW = 39, int playH = 19) {
     distribHeight = uniform_int_distribution<>(1, playableHeight);
 
     int user_input;
-    cout << "Move with AWSD or arrows, x to quit \n" \
+    cout << "AWSD to move, x to quit \n" \
          << "1. classic \n" \
          << "2. classic_speedup \n" \
          << "3. nowalls \n" \
