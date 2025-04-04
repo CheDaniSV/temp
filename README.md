@@ -9,4 +9,4 @@
 - Supports Windows & Linux
 - Has 4 gamemodes
 
-- testing page
+- testing page for jenkins & etc
